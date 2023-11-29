@@ -2,34 +2,66 @@ package com.veoride.gmaptest
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.veoride.gmaptest.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
+    private lateinit var binding: ActivityMainBinding
+
     private lateinit var mMap: GoogleMap
+
+    private lateinit var viewModel: MapViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        initMapFragment()
+        initViewModel()
+        initListener()
+    }
+
+    private fun initListener() {
+        binding.btnStart.setOnClickListener {
+            Toast.makeText(this, "点击Start", Toast.LENGTH_SHORT).show()
+        }
+
+    }
+
+    /**
+     * 初始化ViewModeView
+     */
+    private fun initViewModel() {
+        viewModel = ViewModelProvider(this)[MapViewModel::class.java]
+
+        // 监听界面状态以及事件，并做出响应
+        viewModel.uiState.observe(this) {
+            Log.d("MainActivity", "received response: $it")
+        }
+    }
+
+    /**
+     * 初始化地图fragment
+     */
+    private fun initMapFragment() {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
     }
 
     /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
+     * 地图的回掉
      */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
@@ -38,8 +70,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val sydney = LatLng(-34.0, 151.0)
         mMap.addMarker(
             MarkerOptions()
-            .position(sydney)
-            .title("Marker in Sydney"))
+                .position(sydney)
+                .title("Marker in Sydney")
+        )
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
     }
 }
