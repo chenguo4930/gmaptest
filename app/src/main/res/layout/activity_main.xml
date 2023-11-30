@@ -15,9 +15,11 @@
         android:id="@+id/btn_start"
         android:layout_width="100dp"
         android:layout_height="48dp"
+        android:layout_marginBottom="40dp"
         android:text="@string/start"
         tools:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_constraintLeft_toLeftOf="parent" />
+        tools:layout_constraintLeft_toLeftOf="parent"
+        tools:layout_constraintRight_toRightOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
